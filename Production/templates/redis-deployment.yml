@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.redis.name }}-deployment"
+spec:
+  replicas: {{ .Values.redis.replicas }}
+  selector:
+    matchLabels:
+      components: {{ .Values.redis.components }}
+  template:
+    metadata:
+      labels:
+        components: {{ .Values.redis.components }}
+    spec:
+      containers:
+        - name: {{ .Values.redis.name }}
+          image: "{{ .Values.redis.image }}:{{ .Values.redis.version }}"
+          ports:
+            - containerPort: {{ .Values.redis.port }}
+          resources:
+            requests: {{ .Values.redis.requests | toYaml | nindent 14 }}
+            limits: {{ .Values.redis.limits | toYaml | nindent 14 }}
+          volumeMounts:
+            - name: "{{ .Values.redis.name }}-config-volume"
+              mountPath: /etc/redis
+              readOnly: true
+      nodeSelector:
+        typeNode: statefull
+      volumes:
+        - name: "{{ .Values.redis.name }}-config-volume"
+          configMap:
+            name: "{{ .Values.redis.name }}-config"
+     

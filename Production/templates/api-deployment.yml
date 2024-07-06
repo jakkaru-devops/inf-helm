@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.api.name }}-deployment"
+spec:
+  replicas: {{ .Values.api.replicas }}
+  selector:
+    matchLabels:
+      components: {{ .Values.api.components }}
+  template:
+    metadata:
+      labels:
+        components: {{ .Values.api.components }}
+    spec:
+      # initContainers:
+      #   - name: check-pgrestore-job
+      #     image: appropriate/curl
+      #     command: ['sh', '-c', 'until kubectl get jobs pgrestore -o jsonpath="{.status.succeeded}" | grep 1; do echo waiting for pgrestore job; sleep 2; done;']
+      initContainers:
+        - name: wait-container
+          image: busybox
+          command: ["sleep", "250"]  # Эта команда позволяет контейнеру ожидать 300 секунд (5 минут)
+      containers:
+        - name: {{ .Values.api.name }}
+          image: "{{ .Values.api.image }}:{{ .Values.api.version }}"
+          ports:
+            - containerPort: {{ .Values.api.port }}
+          resources:
+            requests: {{ .Values.api.requests | toYaml | nindent 14 }}
+            limits: {{ .Values.api.limits | toYaml | nindent 14 }}
+          env:
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: "api-secret"
+                  key: DB_PORT
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: "api-secret"
+                  key: DB_HOST
+            - name: CLIENT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: "api-secret"
+                  key: CLIENT_URL
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: "api-secret"
+                  key: REDIS_URL
+      nodeSelector:
+        typeNode: stateless

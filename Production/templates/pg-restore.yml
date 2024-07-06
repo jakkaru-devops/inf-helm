@@ -1,0 +1,62 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pgrestore
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: wait-container
+          image: busybox
+          command: ["sleep", "100"]
+      containers:
+        - name: pgrestore
+          image: "{{ .Values.pgrestore.image }}:{{ .Values.pgrestore.version }}"
+          env:
+            - name: PG_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: "s3-secret"
+                  key: PG_HOST
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "s3-secret"
+                  key: PG_PASSWORD
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: "s3-secret"
+                  key: PG_USER
+            - name: PG_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: "s3-secret"
+                  key: PG_DATABASE
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: "s3-secret"
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: "s3-secret"
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: "s3-secret"
+                  key: AWS_BUCKET_NAME
+            - name: AWS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: "s3-secret"
+                  key: AWS_HOST
+            - name: AWS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: "s3-secret"
+                  key: AWS_PORT
+      restartPolicy: OnFailure
+

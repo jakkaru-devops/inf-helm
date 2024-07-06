@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.postgres.name }}-deployment"
+spec:
+  replicas: {{ .Values.postgres.replicas }}
+  selector:
+    matchLabels:
+      components: {{ .Values.postgres.components }}
+  template:
+    metadata:
+      labels:
+        components: {{ .Values.postgres.components }}
+    spec:
+      containers:
+        - name: {{ .Values.postgres.name }}
+          image: "{{ .Values.postgres.image }}:{{ .Values.postgres.version }}"
+          ports:
+            - containerPort: {{ .Values.postgres.port }}
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: "postgres-secret"
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: "postgres-secret"
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "postgres-secret"
+                  key: POSTGRES_PASSWORD
+          resources:
+            limits: {{ .Values.postgres.limits | toYaml | nindent 14 }}
+          volumeMounts:
+            - name: "{{ .Values.postgres.name }}-data"
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+      nodeSelector:
+        typeNode: statefull
+      volumes:
+        - name: "{{ .Values.postgres.name }}-data"
+          persistentVolumeClaim:
+            claimName: "{{ .Values.postgres.name }}-pvc"

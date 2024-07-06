@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.redis.name }}-clusterip"
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.redis.port }}
+      protocol: TCP
+  selector:
+    components: {{ .Values.redis.components }}

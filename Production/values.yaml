@@ -1,0 +1,103 @@
+pgdumper:
+  name: pg-dumper
+  image: cr.yandex/crpn9ikb6hp5v19o9957/pgdumper
+  version: 60
+  envs:
+    - PG_HOST
+    - PG_PASSWORD
+    - PG_USER
+    - PG_DATABASE
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - AWS_BUCKET_NAME
+    - AWS_HOST
+    - AWS_PORT
+pgrestore:
+  name: pg-restore
+  image: cr.yandex/crpn9ikb6hp5v19o9957/pgrestore
+  version: 15
+  envs:
+    - PG_HOST
+    - PG_PASSWORD
+    - PG_USER
+    - PG_DATABASE
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - AWS_BUCKET_NAME
+    - AWS_HOST
+    - AWS_PORT
+app:
+  name: inf-app
+  image: cr.yandex/crpn9ikb6hp5v19o9957/inf-frontend-dev
+  version: "6"
+  components: frontend
+  port: 3000
+  replicas: 1
+  requests:
+    cpu: "250m"
+    memory: "250Mi"
+  limits:
+    cpu: "250m"
+    memory: "250Mi"
+  envs:
+    - EXTERNAL_CATALOG_SERVER_URL
+    - API_SERVER_URL
+api:
+  name: inf-api
+  image: cr.yandex/crpn9ikb6hp5v19o9957/inf-backend-dev
+  version: "7"
+  components: backend
+  port: 2348
+  replicas: 1
+  requests:
+    cpu: "500m"
+    memory: "350Mi"
+  limits:
+    cpu: "500m"
+    memory: "350Mi"
+  envs:
+    - CLIENT_URL
+    - DB_PORT
+    - DB_HOST
+    - REDIS_URL
+postgres:
+  name: postgres
+  image: postgres
+  version: 14
+  replicas: 1
+  components: postgres
+  port: 5432
+  requests:
+    cpu: "1000m"
+    memory: "2000Mi"
+  limits:
+    cpu: "1000m"
+    memory: "2000Mi"
+  envs:
+    - POSTGRES_DB
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+redis:
+  name: redis
+  image: redis
+  version: 7.0.7
+  replicas: 1
+  components: redis
+  port: 6379
+  requests:
+    cpu: "200m"
+    memory: "250Mi"
+  limits:
+    cpu: "200m"
+    memory: "250Mi"
+database:
+  db: inf
+  user: postgres
+  password: postgres
+vault:
+  secret_id_app: "2196511e-e732-8de0-595b-ba9873a517ca"
+  secret_id_api: "7a242784-3c44-c333-3fe4-5cfa7fd623b6"
+  secret_id_postgres: "26599504-5f0f-ab84-5b89-cffae78c6ce8"
+  secret_id_s3: "07f08f46-90c1-d38b-bbd5-98966bb92bc5"
+  all_role_id: "6b3d541a-6486-fa35-28f1-606a2b50eca8"
+  server_ip: "http://10.96.188.147:8200"
