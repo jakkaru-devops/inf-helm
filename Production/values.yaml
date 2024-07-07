@@ -45,7 +45,7 @@ app:
 api:
   name: inf-api
   image: cr.yandex/crpn9ikb6hp5v19o9957/inf-backend-dev
-  version: "7"
+  version: "19"
   components: backend
   port: 2348
   replicas: 1
