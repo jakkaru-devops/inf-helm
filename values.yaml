@@ -29,7 +29,7 @@ pgrestore:
 app:
   name: inf-app
   image: cr.yandex/crpn9ikb6hp5v19o9957/inf-frontend-dev
-  version: "105"
+  version: "104"
   components: frontend
   port: 3000
   replicas: 1
@@ -45,7 +45,7 @@ app:
 api:
   name: inf-api
   image: cr.yandex/crpn9ikb6hp5v19o9957/inf-backend-dev
-  version: "27"
+  version: "7"
   components: backend
   port: 2348
   replicas: 1
