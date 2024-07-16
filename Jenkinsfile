@@ -52,21 +52,15 @@ pipeline {
             steps {
                 sh 'echo "Current directory: $(pwd)"'
                 sh 'helm package .'
+                withCredentials([usernamePassword(credentialsId: 'NEXUS_CREDENTIAL_ID', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                    sh "curl -u ${NEXUS_USER}:${NEXUS_PASS} http://158.160.64.78:8081/repository/inf-helm/ --upload-file my-chart-1.0.0.tgz"
+                }
             }
         }
 
         
 
-        stage('Deploy To Nexus Repository Helm Chart') {
-            
-
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'NEXUS_CREDENTIAL_ID', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-                    sh "curl -u ${NEXUS_USER}:${NEXUS_PASS} http://158.160.64.78:8081/repository/inf-helm/ --upload-file my-chart-1.0.0.tgz"
-                }
-                // sh "curl -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} ${NEXUS_URL} -X PUT --upload-file 'my-chart-1.0.0.tgz'"
-            }
-        }
+       
             
         
 
