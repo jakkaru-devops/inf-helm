@@ -10,11 +10,12 @@ pipeline {
         SCANNER_HOME =  tool 'sonar-scanner'
         GITHUB_TOKEN = credentials('GITHUB_TOKEN')
         CHART_NAME = "inf-project"
-        CHART_VERSION = "${BUILD_NUMBER}"
-        NEXUS_URL = "http://158.160.64.78:8081/repository/inf-helm"
-        CR_REGISTRY = "cr.yandex/crpn9ikb6hp5v19o9957"
-        CR_REPOSITORY = "inf-frontend-dev"
-        IMAGE_NAME = "${CR_REGISTRY}" + "/" + "${CR_REPOSITORY}"
+        CHART_VERSION = "0.1.0"
+        NEXUS_VERSION = "nexus3"
+        NEXUS_PROTOCOL = "http"
+        NEXUS_URL = "158.160.64.78:8081"
+        NEXUS_REPOSITORY = "inf-helm"
+        NEXUS_CREDENTIAL_ID = credentials('NEXUS_CREDENTIAL_ID')
     }
 
 
@@ -45,10 +46,10 @@ pipeline {
         }
 
 
-       stage('Build helm chart repo version frontend ') {
+       stage('Build helm chart') {
             steps {
                 sh 'echo "Current directory: $(pwd)"'
-                sh 'ls -la'
+                sh 'helm package .'
             }
         }
 
@@ -56,7 +57,9 @@ pipeline {
 
         stage('Deploy To Nexus Repository Helm Chart') {
             steps {
-                sh "curl -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT --upload-file ./target/$CHART_NAME-$CHART_VERSION.tgz $NEXUS_URL$CHART_NAME/$CHART_VERSION/$CHART_NAME-$CHART_VERSION.tgz"
+               withCredentials([usernamePassword(credentialsId: 'NEXUS_CREDENTIAL_ID', usernameVariable: 'admin', passwordVariable: '123')]) {
+                    sh "curl -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT --upload-file ./target/${CHART_NAME}-${CHART_VERSION}.tgz ${NEXUS_URL}${CHART_NAME}/${CHART_VERSION}/${CHART_NAME}-${CHART_VERSION}.tgz"
+                }
             }
         }
 
