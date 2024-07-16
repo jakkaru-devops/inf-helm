@@ -13,7 +13,7 @@ pipeline {
         CHART_VERSION = "0.1.0"
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "158.160.64.78:8081"
+        NEXUS_URL = "http://158.160.64.78:8081/repository/inf-helm"
         NEXUS_REPOSITORY = "inf-helm"
         NEXUS_CREDENTIAL_ID = credentials('NEXUS_CREDENTIAL_ID')
     }
@@ -57,11 +57,7 @@ pipeline {
 
         stage('Deploy To Nexus Repository Helm Chart') {
             steps {
-            //    withCredentials([usernamePassword(credentialsId: 'NEXUS_CREDENTIAL_ID', usernameVariable: 'admin', passwordVariable: '123')]) {
-            //         sh "curl -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT --upload-file ./target/${CHART_NAME}-${CHART_VERSION}.tgz ${NEXUS_URL}${CHART_NAME}/${CHART_VERSION}/${CHART_NAME}-${CHART_VERSION}.tgz"
-            //     }
-                curl "-u "admin":"123" `http://158.160.64.78:8081/repository/inf-helm/` --upload-file "$CHART_NAME-$CHART_VERSION""
-
+                sh "curl -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT --upload-file ./target/${CHART_NAME}-${CHART_VERSION}.tgz ${NEXUS_URL}${CHART_NAME}/${CHART_VERSION}/${CHART_NAME}-${CHART_VERSION}.tgz"
             }
         }
 
