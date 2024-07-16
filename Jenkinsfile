@@ -16,6 +16,8 @@ pipeline {
         NEXUS_URL = "http://158.160.64.78:8081/repository/inf-helm"
         NEXUS_REPOSITORY = "inf-helm"
         NEXUS_CREDENTIAL_ID = credentials('NEXUS_CREDENTIAL_ID')
+        NEXUS_USERNAME = "admin"
+        NEXUS_PASSWORD = "123"
     }
 
 
@@ -57,7 +59,7 @@ pipeline {
 
         stage('Deploy To Nexus Repository Helm Chart') {
             steps {
-                sh "curl -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT --upload-file ./target/${CHART_NAME}-${CHART_VERSION}.tgz ${NEXUS_URL}${CHART_NAME}/${CHART_VERSION}/${CHART_NAME}-${CHART_VERSION}.tgz"
+                sh "curl -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT --upload-file ${CHART_NAME}-${CHART_VERSION}.tgz ${NEXUS_URL}${CHART_NAME}/${CHART_VERSION}/${CHART_NAME}-${CHART_VERSION}.tgz"
             }
         }
 
