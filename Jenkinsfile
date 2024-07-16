@@ -58,10 +58,14 @@ pipeline {
         
 
         stage('Deploy To Nexus Repository Helm Chart') {
+            
+
             steps {
-                sh "curl -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT --upload-file ${CHART_NAME}-${CHART_VERSION}.tgz ${NEXUS_URL}${CHART_NAME}/${CHART_VERSION}/${CHART_NAME}-${CHART_VERSION}.tgz"
+                sh "curl -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} ${NEXUS_URL} -X PUT --upload-file 'my-chart-1.0.0.tgz'"
             }
         }
+            
+        
 
 
     }
