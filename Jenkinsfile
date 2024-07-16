@@ -60,7 +60,7 @@ pipeline {
             //    withCredentials([usernamePassword(credentialsId: 'NEXUS_CREDENTIAL_ID', usernameVariable: 'admin', passwordVariable: '123')]) {
             //         sh "curl -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT --upload-file ./target/${CHART_NAME}-${CHART_VERSION}.tgz ${NEXUS_URL}${CHART_NAME}/${CHART_VERSION}/${CHART_NAME}-${CHART_VERSION}.tgz"
             //     }
-             sh   "curl -u "admin":"123" `http://158.160.64.78:8081/repository/inf-helm/` --upload-file "$CHART_NAME-$CHART_VERSION" "
+                curl "-u "admin":"123" `http://158.160.64.78:8081/repository/inf-helm/` --upload-file "$CHART_NAME-$CHART_VERSION""
 
             }
         }
